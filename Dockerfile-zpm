@@ -6,6 +6,7 @@ USER root
 WORKDIR /opt/hl7tojson
 RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/hl7tojson
 
+RUN apt-get update && apt-get install -y openjdk-8-jre
 
 USER irisowner
 
@@ -29,7 +30,18 @@ RUN \
   zn "HL7TOJSON" \
   zpm "install webterminal" \
   zpm "install restforms2" \
-  Do $system.OBJ.ImportDir(("/opt/hl7tojson/src","*.cls", "ck") \
+  Do $system.OBJ.ImportDir("/opt/hl7tojson/src","*.cls", "ck",,1) \
+  zn "%SYS" \
+  write "Create web application ...",! \
+  set webName = "/api" \
+  set webProperties("NameSpace") = "HL7TOJSON" \
+  set webProperties("Enabled") = 1 \
+  set webProperties("DispatchClass") = "HL7ToJson.Api.disp" \
+  set webProperties("CSPZENEnabled") = 1 \
+  set webProperties("AutheEnabled") = 64 \
+  set sc = ##class(Security.Applications).Create(webName, .webProperties) \
+  write "Web application "_webName_" has been created!",! 
+
 # bringing the standard shell back
 SHELL ["/bin/bash", "-c"]
 CMD [ "-l", "/usr/irissys/mgr/messages.log" ]

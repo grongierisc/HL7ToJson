@@ -11,6 +11,9 @@ XData RuleDefinition [ XMLNamespace = "http://www.intersystems.com/rule" ]
 <rule name="">
 <constraint name="source" value="HL7FileService"></constraint>
 <when condition="1">
+<send transform="HL7ToJson.DT.HL7PIDToJSON" target="HL7ToJson.BO.JDBC"></send>
+<send transform="HL7ToJson.DT.HL7PIDToJSON" target="HL7ToJson.BO.Local"></send>
+<send transform="HL7ToJson.DT.HL7PIDToJSON" target="HL7ToJson.BO.REST"></send>
 <send transform="" target="HL7FileOperation"></send>
 </when>
 </rule>

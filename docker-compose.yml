@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile-zpm
     restart: always
+    depends_on:
+      - db
     ports: 
       - 51773
       - 52773:52773
@@ -12,3 +14,24 @@ services:
     volumes:
       - ~/iris.key:/usr/irissys/mgr/iris.key
       - ./:/irisdev/app
+      - ./misc:/tmp
+  db:
+    image: postgres-hl7:latest
+    build: 
+      context: .
+      dockerfile: Dockerfile-db
+    hostname: db
+    environment:
+      POSTGRES_DB: ${KONG_PG_DATABASE:-iam}
+      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-iam}
+      POSTGRES_USER: ${KONG_PG_USER:-iam}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER:-iam}"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    ports: 
+      - 5432:5432
+    restart: always
+    stdin_open: true
+    tty: true
