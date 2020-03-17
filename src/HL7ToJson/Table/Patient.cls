@@ -1,4 +1,4 @@
-Class HL7ToJson.Table.Patient Extends (%Persistent, HL7ToJson.Object.Patient, Form.Adaptor)
+Class HL7ToJson.Table.Patient Extends (%Persistent, HL7ToJson.Object.Patient, Form.Adaptor, %JSON.Adaptor)
 {
 
 /// Form name, not a global key so it can be anything
@@ -18,8 +18,9 @@ Parameter DISPLAYPROPERTY As %String = "FirstName";
 
 Method %OnNew(patient As HL7ToJson.Object.Patient) As %Status
 {
-    set $this.FirstName = patient.FirstName
-    set $this.LastName = patient.LastName
+     set sc = patient.%JSONExportToString(.json)
+    do $this.%JSONImport(json)
+
     Quit $$$OK
 }
 

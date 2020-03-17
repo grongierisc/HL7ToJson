@@ -9,13 +9,12 @@ Parameter INVOCATION = "Queue";
 
 Method Save(pInput As HL7ToJson.Msg.PatientRequest, pOutput As Ens.Request)
 {
-    set body = {}
-    set body.firstname = pInput.FirstName
-    set body.lastname = pInput.LastName
 
-    $$$LOGINFO(body.%ToJSON())
+    set sc = pInput.%JSONExportToString(.json)
+
+    $$$LOGINFO(json)
     
-    $$$ThrowOnError(..Adapter.Post(.response,,body.%ToJSON()))
+    $$$ThrowOnError(..Adapter.Post(.response,,json))
     
     Quit $$$OK
 }
